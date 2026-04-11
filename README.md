@@ -23,3 +23,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1fji-gf4kzXXHhgDpLU_Uzq
 ## Product Planning
 * [Forward-Thinking Product Features](docs/product_features.md)
 * [Lessons Learned during Context Evaluation](docs/lessons_learned.md)
+
+## Architecture
+* [Architectural Decision Records (ADRs)](docs/adr/)
+  * [ADR 0001: Adoption of CRDTs for Real-time Collaboration](docs/adr/0001-real-time-collaboration-crdt.md)
