@@ -21,3 +21,13 @@ export interface PaletteAction {
   type: 'CREATE' | 'DELETE' | 'ADD_CHAR' | 'REMOVE_CHAR';
   payload: any;
 }
+
+export interface TopologyNode {
+  domain: string;
+  context: string;
+}
+
+export interface PluriversalKnowledgeCapsule {
+  latent_bridge: string;
+  nodes: TopologyNode[];
+}
