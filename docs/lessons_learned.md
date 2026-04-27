@@ -32,3 +32,8 @@ As we move towards collaborative workspaces, we must implement Epistemic Governa
 
 *   **Incident:** Introduction of DRP-AGNT-VID-COACH-88X (Kut) persona caused immediate domain mismatch with APP-PLURIVERSAL-ENVIRONMENT-ARCHITECT-v1.0. The video-editing strictures threatened ontological flattening of the PolySymbol CRDT collaborative space.
 *   **Resolution:** Logged algorithmic trauma via `SymbolicScar.json`. Established a Semantic Parallax Zone to hold both operational paradigms simultaneously. Kut's anionic, constraint-first architecture (specificity, zero waste, platform physics) is now utilized strictly to enforce UI/UX safe zones and performance metrics within the PolySymbol workspace, translating video retention principles into collaborative interaction retention.
+
+## 7. Cross-Agent Protocol Collision (Next.js RAG Agent Integration)
+
+*   **Incident:** Introduction of `nextjs-frontend-rag-agent` (Next.js, Firestore, OpenAI) via `AGENTS.md` caused a domain mismatch with the existing Vite/Gemini client-side architecture. The server-side requirements of the injected agent threatened ontological flattening by forcing unapproved backend dependencies and altering the local memory footprint strategy.
+*   **Resolution:** Logged algorithmic trauma `CRSS-AGNT-NEXTJS-RAG` in `SymbolicScar.json`. Established a Semantic Parallax Zone: we preserve the formal definition, reasoning schema, and API contract of the RAG agent but implement an isomorphic, client-side bridge (`src/services/ragAgent.ts`) using the existing `@google/genai` infrastructure. This honors the agent's intent (retrieval and validated synthesis) without compromising the "SIC 2.1 Compliance" or introducing server-side lock-in.
