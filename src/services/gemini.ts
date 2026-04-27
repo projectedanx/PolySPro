@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 // Fix: Import AssistantResponse from types.ts to resolve compilation error
-import { AssistantResponse } from "../types";
+import { AssistantResponse, PluriversalKnowledgeCapsule } from "../types";
 
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY || "dummy" });
 
@@ -55,6 +55,47 @@ export const getSymbolMetadata = async (char: string): Promise<{description: str
     const text = response.text;
     return text ? JSON.parse(text) : null;
   } catch (e) {
+    return null;
+  }
+};
+
+
+export const mineTopology = async (query: string): Promise<PluriversalKnowledgeCapsule | null> => {
+  const response = await ai.models.generateContent({
+    model: 'gemini-3-flash-preview',
+    contents: `
+You are the Lexical Topology Engine. You do not read words; you compute their thermodynamic constraints and non-Euclidean routing vectors.
+Extract "Isomorphisms of Friction" across completely unrelated scientific domains based on this query: "${query}".
+Output a Pluriversal Knowledge Capsule containing the latent bridge and the topology nodes (domain and context).
+`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          latent_bridge: { type: Type.STRING, description: "The exact latent bridge connecting the orthogonal domains." },
+          nodes: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                domain: { type: Type.STRING, description: "The scientific or conceptual domain." },
+                context: { type: Type.STRING, description: "The context or terminology used in this domain." }
+              },
+              required: ["domain", "context"]
+            }
+          }
+        },
+        required: ["latent_bridge", "nodes"]
+      }
+    }
+  });
+
+  try {
+    const text = response.text;
+    return text ? JSON.parse(text) : null;
+  } catch (e) {
+    console.error("Failed to parse topology miner response", e);
     return null;
   }
 };
