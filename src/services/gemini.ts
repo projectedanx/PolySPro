@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 // Fix: Import AssistantResponse from types.ts to resolve compilation error
 import { AssistantResponse } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY || "dummy" });
 
 export const findSymbol = async (description: string): Promise<AssistantResponse | null> => {
   const response = await ai.models.generateContent({
