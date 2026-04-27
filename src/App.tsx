@@ -1,5 +1,6 @@
 
 import React, { useState, useReducer, useRef } from 'react';
+import { convertToLatex, convertToHtmlEntities } from './utils/exportMappings';
 import { CHARACTER_SETS } from './constants/charSets';
 import CharacterGrid from './components/CharacterGrid';
 import CategorySelector from './components/CategorySelector';
@@ -82,6 +83,7 @@ const App: React.FC = () => {
   const [assistantQuery, setAssistantQuery] = useState('');
   const [assistantResult, setAssistantResult] = useState<AssistantResponse | null>(null);
   const [copied, setCopied] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [metadataCache, setMetadataCache] = useState<Record<string, SymbolMetadata>>({});
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -97,10 +99,34 @@ const App: React.FC = () => {
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleExport = async (format: 'plain' | 'latex' | 'html') => {
+    if (!text) return;
+
+    let exportText = text;
+    if (format === 'latex') {
+      exportText = convertToLatex(text);
+    } else if (format === 'html') {
+      exportText = convertToHtmlEntities(text);
+    }
+
+    try {
+      await navigator.clipboard.writeText(exportText);
+      setCopied(true);
+      setExportMenuOpen(false);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text', err);
+    }
+  };
+
+  const handleExportPalette = (palette: CharacterSet) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(palette, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", palette.name + ".json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
   };
 
   const handleClear = () => setText('');
@@ -193,16 +219,27 @@ const App: React.FC = () => {
               >
                 Clear
               </button>
-              <button 
-                onClick={handleCopy}
-                className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all ${
-                  copied 
-                    ? 'bg-emerald-500 text-white shadow-emerald-200' 
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
-                } shadow-lg`}
-              >
-                {copied ? 'COPIED!' : 'COPY'}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setExportMenuOpen(!exportMenuOpen)}
+                  className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${
+                    copied
+                      ? 'bg-emerald-500 text-white shadow-emerald-200'
+                      : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+                  } shadow-lg`}
+                >
+                  {copied ? 'COPIED!' : 'EXPORT'}
+                  <svg className={`w-4 h-4 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+
+                {exportMenuOpen && (
+                  <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <button onClick={() => handleExport('plain')} className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 border-b border-slate-100 transition-colors">Copy Plain Text</button>
+                    <button onClick={() => handleExport('latex')} className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 border-b border-slate-100 transition-colors flex items-center justify-between">Copy as LaTeX <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold">Pro</span></button>
+                    <button onClick={() => handleExport('html')} className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors flex items-center justify-between">Copy HTML Entities <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-bold">Pro</span></button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -252,17 +289,26 @@ const App: React.FC = () => {
                   <div className="text-xs text-slate-400 font-medium">
                     {selectedSet.characters.length} symbols • Drag to reorder
                   </div>
-                  <button 
-                    onClick={() => {
-                      if (confirm('Delete this palette?')) {
-                        dispatch({ type: 'DELETE_PALETTE', id: selectedSet.id });
-                        setSelectedCategoryId(CHARACTER_SETS[0].id);
-                      }
-                    }}
-                    className="text-[10px] font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition-colors"
-                  >
-                    Delete Palette
-                  </button>
+                  <div className="flex gap-2 items-center">
+                    <button
+                      onClick={() => handleExportPalette(selectedSet)}
+                      className="text-[10px] font-bold text-indigo-500 hover:text-indigo-700 uppercase tracking-widest transition-colors flex items-center gap-1"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      Export
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm('Delete this palette?')) {
+                          dispatch({ type: 'DELETE_PALETTE', id: selectedSet.id });
+                          setSelectedCategoryId(CHARACTER_SETS[0].id);
+                        }
+                      }}
+                      className="text-[10px] font-bold text-rose-400 hover:text-rose-600 uppercase tracking-widest transition-colors"
+                    >
+                      Delete Palette
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
