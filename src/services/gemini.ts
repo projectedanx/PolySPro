@@ -99,3 +99,21 @@ Output a Pluriversal Knowledge Capsule containing the latent bridge and the topo
     return null;
   }
 };
+
+export const predictNextSymbol = async (context: string): Promise<string | null> => {
+  const response = await ai.models.generateContent({
+    model: 'gemini-3-flash-preview',
+    contents: `Based on the following mathematical or scientific text, predict the next logical symbol or short sequence of symbols to autocomplete the equation or text. Respond ONLY with the predicted symbols, nothing else. Context: "${context}"`,
+    config: {
+      temperature: 0.1,
+    }
+  });
+
+  try {
+    const text = response.text;
+    return text ? text.trim() : null;
+  } catch (e) {
+    console.error("Failed to parse autocomplete response", e);
+    return null;
+  }
+};

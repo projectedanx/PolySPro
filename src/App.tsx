@@ -5,7 +5,7 @@ import { CHARACTER_SETS } from './constants/charSets';
 import CharacterGrid from './components/CharacterGrid';
 import CategorySelector from './components/CategorySelector';
 import PaletteModal from './components/PaletteModal';
-import { findSymbol, getSymbolMetadata, mineTopology } from './services/gemini';
+import { findSymbol, getSymbolMetadata, mineTopology, predictNextSymbol } from './services/gemini';
 import { PluriversalKnowledgeCapsule } from './types';
 import { AssistantResponse, CharacterSet, SymbolMetadata } from './types';
 
@@ -86,12 +86,50 @@ const App: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [metadataCache, setMetadataCache] = useState<Record<string, SymbolMetadata>>({});
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const autocompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const selectedSet = CHARACTER_SETS.find(s => s.id === selectedCategoryId) || 
                     paletteState.palettes.find(s => s.id === selectedCategoryId) || 
                     CHARACTER_SETS[0];
+
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setText(newText);
+    setSuggestion(null);
+
+    if (autocompleteTimeoutRef.current) {
+      clearTimeout(autocompleteTimeoutRef.current);
+    }
+
+    if (newText.trim().length > 0) {
+      autocompleteTimeoutRef.current = setTimeout(async () => {
+        const next = await predictNextSymbol(newText);
+        if (next) {
+          setSuggestion(next);
+        }
+      }, 300);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Tab' && suggestion) {
+      e.preventDefault();
+      setText(prev => prev + suggestion);
+      setSuggestion(null);
+    } else if (e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Meta') {
+        // If they type something else, clear suggestion immediately
+        if (suggestion && e.key.length === 1 && suggestion.startsWith(e.key)) {
+            // allow typing over the suggestion partially, but for simplicity we can just clear it and let the debounce fetch a new one
+            setSuggestion(null);
+        } else {
+            setSuggestion(null);
+        }
+    }
+  };
 
   const handleCharSelect = (char: string) => {
     setText(prev => prev + char);
@@ -210,14 +248,27 @@ const App: React.FC = () => {
 
       <main className="max-w-6xl mx-auto px-4 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 flex flex-col gap-6">
+
           <div className="relative group">
             <textarea
               ref={textareaRef}
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
               placeholder="Start typing or select characters below..."
-              className="w-full h-48 p-6 text-2xl symbol-font bg-white border-2 border-slate-200 rounded-2xl shadow-sm focus:border-indigo-500 focus:ring-0 transition-all resize-none"
+              className="w-full h-48 p-6 text-2xl symbol-font bg-transparent border-2 border-slate-200 rounded-2xl shadow-sm focus:border-indigo-500 focus:ring-0 transition-all resize-none relative z-10"
+              style={{ caretColor: 'black' }}
             />
+            {suggestion && (
+              <div
+                className="absolute top-0 left-0 w-full h-48 p-6 text-2xl symbol-font pointer-events-none z-0 text-slate-400 whitespace-pre-wrap break-words"
+                aria-hidden="true"
+              >
+                <span className="invisible">{text}</span>
+                <span className="text-slate-300 bg-slate-100 rounded px-1">{suggestion}</span>
+              </div>
+            )}
+
             <div className="absolute bottom-4 right-4 flex items-center gap-2">
                <button 
                 onClick={handleBackspace}
