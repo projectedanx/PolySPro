@@ -117,3 +117,26 @@ export const predictNextSymbol = async (context: string): Promise<string | null>
     return null;
   }
 };
+
+export const generateQuizDistractors = async (char: string, correctDescription: string): Promise<string[] | null> => {
+  const response = await ai.models.generateContent({
+    model: 'gemini-3-flash-preview',
+    contents: `For the symbol "${char}" with the correct description "${correctDescription}", generate exactly 3 plausible but incorrect descriptions (distractors) that could trick a user in a multiple-choice quiz. Return them as a JSON array of 3 strings.`,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING },
+        description: "An array of 3 incorrect but plausible descriptions."
+      }
+    }
+  });
+
+  try {
+    const text = response.text;
+    return text ? JSON.parse(text) : null;
+  } catch (e) {
+    console.error("Failed to parse distractors response", e);
+    return null;
+  }
+};

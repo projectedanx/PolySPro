@@ -31,3 +31,11 @@ export interface PluriversalKnowledgeCapsule {
   latent_bridge: string;
   nodes: TopologyNode[];
 }
+
+export interface QuizQuestion {
+  symbol: string;
+  correctAnswer: string;
+  options: string[];
+}
+
+export type StudyModeState = 'idle' | 'loading' | 'active' | 'finished';
