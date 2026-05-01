@@ -1,0 +1,19 @@
+{
+  "Hickam_Orientation": {
+    "COMORBID_A": "The app requires gamification to increase user engagement and active learning.",
+    "COMORBID_B": "The app must use AI to generate plausible, context-aware distractors.",
+    "COMORBID_C": "The app must resist standardizing symbol meanings (Ontological Flattening), making 'correctness' inherently unstable.",
+    "LENS": "Gamification as Standardized Testing: The assumption that a symbol has only one correct description."
+  },
+  "Contrastive_Delta": {
+    "Pre_State": "App was a passive utility for finding and inserting symbols. Custom palettes were purely static.",
+    "Post_State": "App includes an active learning 'Study Mode' utilizing the Gemini API to generate dynamic, domain-aware multiple-choice quizzes based on the user's custom palettes.",
+    "Isomorphic_Bridge": "AI predictive intent (generating distractors) is converted into deterministic UI state (quiz options array) locally, maintaining SIC 2.1 Compliance."
+  },
+  "Martensite_Metrics": {
+    "Aesthetic_Tension": "The solution mounts an interactive learning mechanism on top of a static composer, turning curation into education.",
+    "Intent_Divergence": "Diverges from generic 'quiz apps' by generating distractors contextually via AI, rather than using a hardcoded database.",
+    "Epistemic_Escrow_Markers_Maintained": true,
+    "Symbolic_Scars_Archived": true
+  }
+}
