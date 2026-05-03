@@ -146,3 +146,32 @@ A feature that helps users actively learn the names, meanings, and usage of symb
 *   Each palette header includes a "Study Mode" toggle.
 *   Study mode presents a symbol and four multiple-choice options for its name (1 correct, 3 AI-generated distractors).
 *   The application tracks correct and incorrect answers per session and displays a summary screen upon completion.
+
+---
+
+## 6. Project Aurelius: Unified Meta-Prompting API
+
+**Feature Definition:**
+A revolutionary developer and power-user tool that allows programmatic specification of generative processes using non-Euclidean geometric directives. Users can sculpt "Latent Spaces" directly, enforcing physical, logical, or purely abstract topological rules upon the generative output.
+
+**Stakeholder Perspective Analysis:**
+*   **User Segment (AI Architects/Researchers):** "I can stop guessing with words and start commanding with geometry. I can force the model to render a scene in a specific, mathematically defined hyperbolic space."
+*   **Business Alignment:** Positions PolySymbol Pro not just as a symbol composer, but as a foundational interface for the next generation of conceptual AI rendering and prompt engineering.
+*   **Technical Feasibility:** Highly experimental. Requires translating abstract mathematics into structured natural language constraints via an isomorphic AI bridge (The "Plausibility Oracle").
+
+**Requirement Decomposition:**
+*   **Epic Breakdown:**
+    *   API interface for `LatentTopologyRequest`.
+    *   AI translation layer to map topology to "Phantom Dimensions" and constraints.
+    *   Mock integration of PBR (Physically Based Rendering) plausibility scoring.
+*   **Complexity Assessment:** Maximum complexity. Navigates the bleeding edge of AI latent space control and epistemic modeling.
+
+**User Stories:**
+*   As a researcher, I want to define a "curvature bias" so that the generated scene adheres to Riemannian geometry.
+*   As an AI Architect, I want to see a "Provenance Trail" to understand which training data clusters influenced the generation.
+*   As a user, I want the "Plausibility Oracle" to automatically refine my prompt if it violates the defined physical constraints.
+
+**Acceptance Criteria:**
+*   Given a `LatentTopologyRequest` for "Hyperbolic" geometry, the API returns a structured meta-prompt containing explicit rules preventing Euclidean parallel lines.
+*   The response includes a `plausibility_score` evaluating the generated constraints.
+*   The system maintains SIC 2.1 compliance (all state purely client-side).
