@@ -1,5 +1,6 @@
 
 import React, { useState, useReducer, useRef } from 'react';
+import { AgenticIntervention } from './types';
 import { convertToLatex, convertToHtmlEntities } from './utils/exportMappings';
 import { CHARACTER_SETS } from './constants/charSets';
 import CharacterGrid from './components/CharacterGrid';
@@ -7,6 +8,8 @@ import CategorySelector from './components/CategorySelector';
 import PaletteModal from './components/PaletteModal';
 import StudyMode from './components/StudyMode';
 import { findSymbol, getSymbolMetadata, mineTopology, predictNextSymbol } from './services/gemini';
+import { evaluateEpistemicEscrow } from './services/agentic/epistemicEscrow';
+import { checkPlausibility } from './services/agentic/plausibilityOracle';
 import { PluriversalKnowledgeCapsule } from './types';
 import { AssistantResponse, CharacterSet, SymbolMetadata } from './types';
 
@@ -89,6 +92,14 @@ const App: React.FC = () => {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [metadataCache, setMetadataCache] = useState<Record<string, SymbolMetadata>>({});
   const [suggestion, setSuggestion] = useState<string | null>(null);
+
+  const [topologyQuery, setTopologyQuery] = useState('');
+  const [topologyLoading, setTopologyLoading] = useState(false);
+  const [topologyResult, setTopologyResult] = useState<any | null>(null);
+
+  // Agentic Inversion State
+  const [agenticIntervention, setAgenticIntervention] = useState<AgenticIntervention | null>(null);
+
   const autocompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -177,7 +188,19 @@ const App: React.FC = () => {
     if (!assistantQuery.trim()) return;
     setAssistantLoading(true);
     setAssistantResult(null);
+    setAgenticIntervention(null);
     try {
+      // Epistemic Escrow Check
+      const escrowCheck = await evaluateEpistemicEscrow(assistantQuery);
+      if (escrowCheck && escrowCheck.is_escrowed) {
+        setAgenticIntervention({
+          type: 'ESCROW',
+          message: "Epistemic Escrow Triggered: Interpretive Fracture Detected.",
+          details: escrowCheck
+        });
+        return;
+      }
+
       const res = await findSymbol(assistantQuery);
       setAssistantResult(res);
       // Automatically cache results from assistant
@@ -207,7 +230,25 @@ const App: React.FC = () => {
     if (!topologyQuery.trim()) return;
     setTopologyLoading(true);
     setTopologyResult(null);
+    setAgenticIntervention(null);
     try {
+      // Plausibility Oracle Check
+      const constraints = [
+        "Must not invoke server-side specific language or APIs",
+        "Must be purely conceptual or client-side abstract",
+        "Must not request direct database manipulation"
+      ];
+      const plausibilityCheck = await checkPlausibility(topologyQuery, constraints);
+
+      if (plausibilityCheck && !plausibilityCheck.is_valid) {
+        setAgenticIntervention({
+          type: 'ORACLE_REJECTION',
+          message: "Plausibility Oracle: Structural Constraint Violation.",
+          details: plausibilityCheck
+        });
+        return;
+      }
+
       const res = await mineTopology(topologyQuery);
       setTopologyResult(res);
     } finally {
@@ -249,6 +290,42 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 pt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      {agenticIntervention && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-2 border-rose-500">
+            <h2 className="text-xl font-bold text-rose-600 mb-2">{agenticIntervention.message}</h2>
+            <div className="text-sm text-slate-700 mb-6 space-y-2">
+              {agenticIntervention.type === 'ESCROW' && (
+                <>
+                  <p><span className="font-bold">Ambiguity Source:</span> {(agenticIntervention.details as any).ambiguity_source}</p>
+                  <p className="bg-amber-50 p-3 rounded border border-amber-200 text-amber-900 font-medium">
+                    {(agenticIntervention.details as any).clarifying_question}
+                  </p>
+                </>
+              )}
+              {agenticIntervention.type === 'ORACLE_REJECTION' && (
+                <>
+                  <p><span className="font-bold">Violated Constraint:</span> {(agenticIntervention.details as any).violated_constraint}</p>
+                  <p><span className="font-bold text-slate-900">Justification:</span> {(agenticIntervention.details as any).justification}</p>
+                  <p className="bg-rose-50 p-3 rounded border border-rose-200 text-rose-900 font-medium">
+                    {(agenticIntervention.details as any).required_action}
+                  </p>
+                </>
+              )}
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setAgenticIntervention(null)}
+                className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-900 font-bold text-sm"
+              >
+                Acknowledge & Revise
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
         <div className="lg:col-span-8 flex flex-col gap-6">
 
           <div className="relative group">

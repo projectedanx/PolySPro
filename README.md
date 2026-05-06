@@ -27,3 +27,8 @@ View your app in AI Studio: https://ai.studio/apps/drive/1fji-gf4kzXXHhgDpLU_Uzq
 ## Architecture
 * [Architectural Decision Records (ADRs)](docs/adr/)
   * [ADR 0001: Adoption of CRDTs for Real-time Collaboration](docs/adr/0001-real-time-collaboration-crdt.md)
+
+### Emergence Features (Agentic Inversion)
+* PolySymbol Pro now includes proactive agentic boundaries:
+  * **Plausibility Oracle**: Enforces architectural constraints (SIC 2.1) before executing topological queries.
+  * **Epistemic Escrow**: Detects high Confidence-Fidelity Divergence (ambiguity) in Smart Finder queries and halts execution to demand user clarification, preventing "Ontological Flattening."

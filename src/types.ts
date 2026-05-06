@@ -60,3 +60,24 @@ export interface TopologyResponse {
   plausibility_score: PlausibilityMetric;
   provenance_trail: string[];
 }
+
+// Agentic Inversion: Plausibility Oracle & Epistemic Escrow Types
+export interface EpistemicEscrowRequest {
+  is_escrowed: boolean;
+  cfd_index: number; // Confidence-Fidelity Divergence Index (0.0 to 1.0)
+  ambiguity_source: string;
+  clarifying_question: string;
+}
+
+export interface PlausibilityConstraint {
+  is_valid: boolean;
+  violated_constraint: string | null;
+  justification: string | null;
+  required_action: string | null;
+}
+
+export interface AgenticIntervention {
+  type: 'ESCROW' | 'ORACLE_REJECTION';
+  message: string;
+  details: EpistemicEscrowRequest | PlausibilityConstraint;
+}
