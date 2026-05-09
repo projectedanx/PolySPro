@@ -1,6 +1,15 @@
 
 import { CharacterSet } from '../types';
 
+/**
+ * Pre-defined, default character sets available in the application.
+ *
+ * This constant provides a list of standard domains and their associated characters,
+ * covering various languages and mathematical/scientific symbols.
+ *
+ * @constant
+ * @type {CharacterSet[]}
+ */
 export const CHARACTER_SETS: CharacterSet[] = [
   {
     id: 'math',

@@ -2,13 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { CharacterSet, QuizQuestion, StudyModeState, SymbolMetadata } from '../types';
 import { generateQuizDistractors, getSymbolMetadata } from '../services/gemini';
 
+/**
+ * Props for the StudyMode component.
+ */
 interface StudyModeProps {
+  /** The character set to use as the source material for the quiz. */
   palette: CharacterSet;
+  /** Cached metadata definitions used to generate correct answers. */
   metadataCache: Record<string, SymbolMetadata>;
+  /** Callback to trigger a fetch for missing metadata. */
   onHoverChar: (char: string) => void;
+  /** Callback fired to exit Study Mode and return to the main interface. */
   onExit: () => void;
 }
 
+/**
+ * Implements an interactive "Study Mode" featuring dynamically generated multiple-choice quizzes
+ * based on a given character set, utilizing the AI to generate plausible distractors.
+ *
+ * @param {StudyModeProps} props - The component props.
+ * @returns {React.ReactElement} The rendered component representing a specific phase of the quiz lifecycle.
+ */
 const StudyMode: React.FC<StudyModeProps> = ({ palette, metadataCache, onHoverChar, onExit }) => {
   const [state, setState] = useState<StudyModeState>('idle');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -18,6 +32,10 @@ const StudyMode: React.FC<StudyModeProps> = ({ palette, metadataCache, onHoverCh
 
   // [∇] Uncertainty: The API calls might fail or timeout. We handle this with a fallback,
   // but the user experience during a 10+ second wait (for large palettes) might be poor.
+  /**
+   * Initializes the quiz process by selecting symbols, ensuring their metadata is cached,
+   * and generating plausible distractors using the AI. Updates component state through the loading phase.
+   */
   const startQuiz = async () => {
     setState('loading');
     const newQuestions: QuizQuestion[] = [];
@@ -56,6 +74,12 @@ const StudyMode: React.FC<StudyModeProps> = ({ palette, metadataCache, onHoverCh
     setState('active');
   };
 
+  /**
+   * Evaluates the selected answer against the correct description, updates the score,
+   * and advances to the next question or finishes the quiz.
+   *
+   * @param {string} selectedOption - The user's chosen answer.
+   */
   const handleAnswer = (selectedOption: string) => {
     const currentQ = questions[currentIndex];
     if (selectedOption === currentQ.correctAnswer) {

@@ -2,6 +2,16 @@ import { Type } from "@google/genai";
 import { ai } from "../gemini";
 import { EpistemicEscrowRequest } from "../../types";
 
+/**
+ * Evaluates a user query to detect "Interpretive Fracture" (ambiguity or hidden assumptions).
+ *
+ * If the calculated Confidence-Fidelity Divergence Index (CFDI) exceeds the given threshold,
+ * the query is intercepted (escrowed) and a clarifying question is generated, preventing "Ontological Flattening".
+ *
+ * @param {string} query - The raw user input query.
+ * @param {number} [cfdThreshold=0.15] - The threshold above which ambiguity triggers an escrow intervention.
+ * @returns {Promise<EpistemicEscrowRequest | null>} Details of the escrow request or null on evaluation failure.
+ */
 export const evaluateEpistemicEscrow = async (query: string, cfdThreshold: number = 0.15): Promise<EpistemicEscrowRequest | null> => {
   try {
     const response = await ai.models.generateContent({

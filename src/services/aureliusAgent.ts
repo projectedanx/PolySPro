@@ -3,6 +3,14 @@ import { ai } from "./gemini";
 import { Type } from "@google/genai";
 
 // Mock Plausibility Oracle - checks if constraints are strong enough
+/**
+ * Mocks the evaluation of a prompt's structural plausibility against a set of constraints.
+ * Currently uses simple entropy (string length) as a placeholder for actual LLM-based metric extraction.
+ *
+ * @param {string} prompt - The generated meta-prompt to evaluate.
+ * @param {string[]} constraints - An array of enforced constraints.
+ * @returns {PlausibilityMetric} The calculated plausibility metrics.
+ */
 export const evaluatePlausibility = (prompt: string, constraints: string[]): PlausibilityMetric => {
   const complexity = prompt.length + constraints.join(" ").length;
   // Mock scoring based on string length entropy
@@ -13,6 +21,15 @@ export const evaluatePlausibility = (prompt: string, constraints: string[]): Pla
   };
 };
 
+/**
+ * Implements an autonomous loop acting as a "Plausibility Oracle".
+ * It iteratively refines a prompt to meet specific threshold requirements for physical adherence
+ * and semantic drift, recording the "provenance trail" of its decisions.
+ *
+ * @param {LatentTopologyRequest} request - The initial configuration for the generative topology.
+ * @param {number} [maxIterations=3] - The maximum number of optimization loops to run.
+ * @returns {Promise<TopologyResponse>} The finalized prompt, constraints, scores, and provenance trail.
+ */
 export const autonomousPromptOptimizer = async (
   request: LatentTopologyRequest,
   maxIterations: number = 3
@@ -84,6 +101,13 @@ export interface ProvenanceRecord {
   bias_type: string;
 }
 
+/**
+ * Analyzes a given prompt to detect latent biases derived from training data clusters
+ * ("Latent Semiotic Gravity") and generates a debiased version attempting to achieve a purer geometric output.
+ *
+ * @param {string} prompt - The prompt to analyze.
+ * @returns {Promise<{ debiased_prompt: string, records: ProvenanceRecord[] }>} The debiased prompt and associated bias records.
+ */
 export const analyzeProvenanceAndDebias = async (prompt: string): Promise<{ debiased_prompt: string, records: ProvenanceRecord[] }> => {
   try {
     const response = await ai.models.generateContent({
@@ -137,6 +161,14 @@ export interface HyperSpectralRequest {
   msi_bands: number; // Number of spectral bands to simulate (e.g., 3 for RGB, 16 for MSI)
 }
 
+/**
+ * Represents a "Cross-Modal Perceptual Fusion Engine".
+ * Translates a standard text prompt into a technical rendering specification optimized for specific display hardware,
+ * simulating multispectral imaging data.
+ *
+ * @param {HyperSpectralRequest} request - The configuration detailing the target display and spectral bands.
+ * @returns {Promise<string>} The generated hardware-specific rendering instruction set.
+ */
 export const renderHyperSpectralHDRi = async (request: HyperSpectralRequest): Promise<string> => {
   try {
     const response = await ai.models.generateContent({

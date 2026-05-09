@@ -3,13 +3,27 @@ import React from 'react';
 import { CHARACTER_SETS } from '../constants/charSets';
 import { CharacterSet } from '../types';
 
+/**
+ * Props for the CategorySelector component.
+ */
 interface CategorySelectorProps {
+  /** The ID of the currently selected character set. */
   selectedId: string;
+  /** Callback fired when a category (built-in or custom) is selected. */
   onSelect: (id: string) => void;
+  /** Array of user-defined custom palettes. */
   customPalettes: CharacterSet[];
+  /** Callback fired when the user clicks to create a new custom palette. */
   onCreateClick: () => void;
 }
 
+/**
+ * Renders a sidebar navigation list allowing users to select between standard character libraries
+ * and their own custom palettes. Includes functionality to trigger palette creation.
+ *
+ * @param {CategorySelectorProps} props - The component props.
+ * @returns {React.ReactElement} The rendered component.
+ */
 const CategorySelector: React.FC<CategorySelectorProps> = ({ 
   selectedId, 
   onSelect, 

@@ -27,6 +27,13 @@ export interface RagResponse {
   suggestion?: string | null;
 }
 
+/**
+ * Simulates retrieval of documents based on a query.
+ *
+ * @param {string} query - The search query.
+ * @param {string} collection - The collection to search in.
+ * @returns {Promise<any[]>} An array of mock document objects.
+ */
 export const retrieveDocuments = async (query: string, collection: string) => {
   return [
     { id: "doc-1", title: "Test Doc 1", snippet: "This is relevant context about " + query, url: "https://example.com/1" },
@@ -34,10 +41,24 @@ export const retrieveDocuments = async (query: string, collection: string) => {
   ];
 };
 
+/**
+ * Mocks the reranking of retrieved documents based on relevance to the query.
+ *
+ * @param {string} query - The search query.
+ * @param {any[]} docs - The initial retrieved documents.
+ * @returns {Promise<any[]>} The reranked documents with assigned scores.
+ */
 export const rerankResults = async (query: string, docs: any[]) => {
   return docs.map(d => ({ ...d, score: 0.9 }));
 };
 
+/**
+ * Generates structured citations mapping claims in the answer to the provided source documents.
+ *
+ * @param {string} answer - The generated answer text.
+ * @param {any[]} docs - The source documents used for generation.
+ * @returns {Promise<Object>} An object containing citations and unmapped claims.
+ */
 export const generateCitations = async (answer: string, docs: any[]) => {
   return {
     citations: docs.map(d => ({
@@ -51,6 +72,15 @@ export const generateCitations = async (answer: string, docs: any[]) => {
   };
 };
 
+/**
+ * Orchestrates the full Retrieval-Augmented Generation (RAG) pipeline.
+ * Coordinates retrieval, reranking, LLM generation, and citation formatting, while recording latency metrics.
+ *
+ * @param {string} query - The user's query.
+ * @param {string} userId - The ID of the user executing the query.
+ * @param {string} collectionName - The target document collection.
+ * @returns {Promise<RagResponse>} The final structured response containing the answer, citations, and stats.
+ */
 export const runRagQuery = async (query: string, userId: string, collectionName: string): Promise<RagResponse> => {
   const start = Date.now();
 

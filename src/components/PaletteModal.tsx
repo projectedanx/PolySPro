@@ -1,12 +1,24 @@
 
 import React, { useState } from 'react';
 
+/**
+ * Props for the PaletteModal component.
+ */
 interface PaletteModalProps {
+  /** Controls the visibility of the modal. */
   isOpen: boolean;
+  /** Callback fired to close the modal. */
   onClose: () => void;
+  /** Callback fired with the given name to create a new custom palette. */
   onCreate: (name: string) => void;
 }
 
+/**
+ * Renders a modal dialogue allowing users to input a name and create a new custom palette.
+ *
+ * @param {PaletteModalProps} props - The component props.
+ * @returns {React.ReactElement | null} The rendered component or null if not open.
+ */
 const PaletteModal: React.FC<PaletteModalProps> = ({ isOpen, onClose, onCreate }) => {
   const [name, setName] = useState('');
 

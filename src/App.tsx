@@ -78,26 +78,42 @@ function paletteReducer(state: State, action: Action): State {
   }
 }
 
+/**
+ * The root application component for PolySymbol Pro.
+ *
+ * Manages the global state for active character sets, custom user palettes,
+ * Study Mode transitions, and integration with advanced Agentic components
+ * like the Plausibility Oracle and Epistemic Escrow.
+ *
+ * @returns {React.ReactElement} The rendered application.
+ */
 const App: React.FC = () => {
   const [text, setText] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(CHARACTER_SETS[0].id);
   const [paletteState, dispatch] = useReducer(paletteReducer, { palettes: [] });
+  /** State controlling the visibility of the "Create Custom Palette" modal. */
   const [isModalOpen, setIsModalOpen] = useState(false);
+  /** State indicating if the UI is in a mode allowing users to select symbols to add to a custom palette. */
   const [isAddingMode, setIsAddingMode] = useState(false);
+  /** State indicating if the full-screen Study Mode (quiz interface) is active. */
   const [isStudyMode, setIsStudyMode] = useState(false);
   const [assistantLoading, setAssistantLoading] = useState(false);
   const [assistantQuery, setAssistantQuery] = useState('');
   const [assistantResult, setAssistantResult] = useState<AssistantResponse | null>(null);
   const [copied, setCopied] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  /** State cache storing previously fetched symbol metadata from the Gemini API to reduce network calls. */
   const [metadataCache, setMetadataCache] = useState<Record<string, SymbolMetadata>>({});
   const [suggestion, setSuggestion] = useState<string | null>(null);
 
+  /** State bound to the input field for querying the Lexical Topology Miner (RAG). */
   const [topologyQuery, setTopologyQuery] = useState('');
+  /** State tracking loading status during Lexical Topology queries. */
   const [topologyLoading, setTopologyLoading] = useState(false);
   const [topologyResult, setTopologyResult] = useState<any | null>(null);
 
   // Agentic Inversion State
+  /** State holding current intervention messages from the Plausibility Oracle or Epistemic Escrow. */
   const [agenticIntervention, setAgenticIntervention] = useState<AgenticIntervention | null>(null);
 
   const autocompleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -226,6 +242,10 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * Executes a query against the Lexical Topology Miner.
+   * Intercepts the query with the Epistemic Escrow first to prevent ambiguous execution.
+   */
   const runTopologyMiner = async () => {
     if (!topologyQuery.trim()) return;
     setTopologyLoading(true);

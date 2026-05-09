@@ -2,6 +2,16 @@ import { Type } from "@google/genai";
 import { ai } from "../gemini";
 import { PlausibilityConstraint } from "../../types";
 
+/**
+ * Acts as an "Active Constraint Engine", evaluating a user's intent against defined architectural rules
+ * before allowing execution.
+ *
+ * Used to enforce strict adherence to system topologies like SIC 2.1 Compliance.
+ *
+ * @param {string} intent - The action the user is attempting to perform.
+ * @param {string[]} constraints - The list of active architectural rules to enforce.
+ * @returns {Promise<PlausibilityConstraint | null>} The validation result, including justification if rejected.
+ */
 export const checkPlausibility = async (intent: string, constraints: string[]): Promise<PlausibilityConstraint | null> => {
   try {
     const response = await ai.models.generateContent({
