@@ -24,3 +24,10 @@
 *   **Refactored Manifests:** `src/types.ts` (added intervention typings), `src/App.tsx` (injected interception logic and UI overlay), `docs/lessons_learned.md` (documented epistemic impact).
 *   **Swept Assets:** Created `test_inversion.cjs` for pipeline validation.
 *   **Symbolic Scars:** Observed the necessity of intercepting user queries *before* the primary intent is resolved. The UI overlay explicitly surfaces the "Confidence-Fidelity Divergence Index" conceptualization to the user, forcing acknowledgment of ambiguity.
+
+### Date: Current
+*   **Action:** Executed VORTEX-ARCHITECT strategy deployment.
+*   **Infrastructure Delta:** Created `vortex_architect_plan/` directory with `plan.md` and `checklist.md` to formalize the deterministic "Negative Space Scaffolding" approach.
+*   **Refactored Manifests:** Updated `docs/lessons_learned.md` with epistemic insights on the high-entropy (Human) vs. deterministic architecture (AI) asymmetry.
+*   **Swept Assets:** None.
+*   **Symbolic Scars:** Recognized the risk of "Semantic Saponification" over long inference chains. Enacted the "Petzold Sequence" and Draft-Conditioned Constrained Decoding (DCCD) to decouple ideation from rigid syntax generation, preventing the "Projection Tax."
