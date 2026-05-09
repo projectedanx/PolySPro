@@ -2,18 +2,37 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SymbolMetadata } from '../types';
 
+/**
+ * Props for the CharacterGrid component.
+ */
 interface CharacterGridProps {
+  /** The list of characters to display in the grid. */
   characters: string[];
+  /** Callback fired when a character is selected (clicked). */
   onSelect: (char: string) => void;
+  /** Indicates if the grid is rendering a user-defined custom palette. */
   isCustomPalette?: boolean;
+  /** Callback to remove a character from the custom palette. */
   onRemove?: (char: string) => void;
+  /** Callback fired when a character is dragged and dropped to a new position. */
   onReorder?: (startIndex: number, endIndex: number) => void;
+  /** Indicates if the grid is in "adding mode" (selecting characters to add to a custom palette). */
   isAddingMode?: boolean;
+  /** Callback fired when a character is clicked in adding mode. */
   onAddToActive?: (char: string) => void;
+  /** Cache containing fetched metadata for characters to display in tooltips. */
   metadataCache: Record<string, SymbolMetadata>;
+  /** Callback to trigger a metadata fetch for a hovered character. */
   onHoverChar: (char: string) => void;
 }
 
+/**
+ * Renders a grid of characters, supporting drag-and-drop reordering for custom palettes,
+ * selection, and hover tooltips providing AI-fetched metadata.
+ *
+ * @param {CharacterGridProps} props - The component props.
+ * @returns {React.ReactElement} The rendered component.
+ */
 const CharacterGrid: React.FC<CharacterGridProps> = ({ 
   characters, 
   onSelect, 
@@ -32,18 +51,33 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
   
   const hoverTimeoutRef = useRef<number | null>(null);
 
+  /**
+   * Initializes drag operation.
+   * @param {React.DragEvent} e - The drag event.
+   * @param {number} index - The index of the item being dragged.
+   */
   const handleDragStart = (e: React.DragEvent, index: number) => {
     if (!isCustomPalette) return;
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
   };
 
+  /**
+   * Handles drag over event to indicate valid drop targets.
+   * @param {React.DragEvent} e - The drag event.
+   * @param {number} index - The index of the current target item.
+   */
   const handleDragOver = (e: React.DragEvent, index: number) => {
     if (!isCustomPalette || draggedIndex === null) return;
     e.preventDefault();
     setDragOverIndex(index);
   };
 
+  /**
+   * Finalizes the drag operation and triggers reordering.
+   * @param {React.DragEvent} e - The drag event.
+   * @param {number} index - The index where the item is dropped.
+   */
   const handleDrop = (e: React.DragEvent, index: number) => {
     if (!isCustomPalette || draggedIndex === null || !onReorder) return;
     e.preventDefault();
@@ -54,6 +88,11 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
     setDragOverIndex(null);
   };
 
+  /**
+   * Sets hover state, calculates tooltip position, and initiates metadata fetch after a delay.
+   * @param {string} char - The hovered character.
+   * @param {React.MouseEvent} e - The mouse event.
+   */
   const handleMouseEnter = (char: string, e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltipPos({ 
@@ -70,6 +109,9 @@ const CharacterGrid: React.FC<CharacterGridProps> = ({
     }, 300);
   };
 
+  /**
+   * Clears hover state and cancels any pending metadata fetch timeout.
+   */
   const handleMouseLeave = () => {
     setHoveredChar(null);
     if (hoverTimeoutRef.current) window.clearTimeout(hoverTimeoutRef.current);

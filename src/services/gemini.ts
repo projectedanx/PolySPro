@@ -5,6 +5,12 @@ import { AssistantResponse, PluriversalKnowledgeCapsule, LatentTopologyRequest, 
 
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY || "dummy" });
 
+/**
+ * Interrogates the Gemini API to retrieve structured metadata based on a user's textual description of a symbol.
+ *
+ * @param {string} description - The user's query describing the symbol.
+ * @returns {Promise<AssistantResponse | null>} A promise that resolves to the metadata object, or null on failure.
+ */
 export const findSymbol = async (description: string): Promise<AssistantResponse | null> => {
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
@@ -33,6 +39,12 @@ export const findSymbol = async (description: string): Promise<AssistantResponse
   }
 };
 
+/**
+ * Retrieves brief official description and usage metadata for a given character symbol.
+ *
+ * @param {string} char - The target character symbol.
+ * @returns {Promise<{description: string, usage: string} | null>} A promise resolving to the metadata, or null on failure.
+ */
 export const getSymbolMetadata = async (char: string): Promise<{description: string, usage: string} | null> => {
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
@@ -60,6 +72,13 @@ export const getSymbolMetadata = async (char: string): Promise<{description: str
 };
 
 
+/**
+ * Computes thermodynamic constraints and non-Euclidean routing vectors to extract "Isomorphisms of Friction"
+ * across unrelated scientific domains based on the user's query.
+ *
+ * @param {string} query - The base concept to explore across domains.
+ * @returns {Promise<PluriversalKnowledgeCapsule | null>} A promise resolving to the Pluriversal Knowledge Capsule.
+ */
 export const mineTopology = async (query: string): Promise<PluriversalKnowledgeCapsule | null> => {
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
@@ -100,6 +119,12 @@ Output a Pluriversal Knowledge Capsule containing the latent bridge and the topo
   }
 };
 
+/**
+ * Predicts the next logical symbol or short sequence of symbols to autocomplete an equation or text.
+ *
+ * @param {string} context - The preceding mathematical or scientific text.
+ * @returns {Promise<string | null>} A promise resolving to the predicted symbols.
+ */
 export const predictNextSymbol = async (context: string): Promise<string | null> => {
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
@@ -118,6 +143,13 @@ export const predictNextSymbol = async (context: string): Promise<string | null>
   }
 };
 
+/**
+ * Generates plausible but incorrect descriptions (distractors) for use in multiple-choice quiz questions.
+ *
+ * @param {string} char - The target symbol.
+ * @param {string} correctDescription - The correct description of the symbol.
+ * @returns {Promise<string[] | null>} A promise resolving to an array of distractor strings.
+ */
 export const generateQuizDistractors = async (char: string, correctDescription: string): Promise<string[] | null> => {
   const response = await ai.models.generateContent({
     model: 'gemini-1.5-flash',
@@ -142,6 +174,13 @@ export const generateQuizDistractors = async (char: string, correctDescription: 
 };
 
 // Project Aurelius: Isomorphic Bridge to Non-Euclidean Latent Space
+/**
+ * Constructs a "Unified Meta-Prompt" that forces an image generation model to render a concept
+ * adhering strictly to specific geometry constraints (Project Aurelius).
+ *
+ * @param {LatentTopologyRequest} request - The requested geometric transformation parameters.
+ * @returns {Promise<TopologyResponse | null>} A promise resolving to the topology response containing the meta-prompt and constraints.
+ */
 export const modulatePhantomDimensions = async (request: LatentTopologyRequest): Promise<TopologyResponse | null> => {
   try {
     const response = await ai.models.generateContent({

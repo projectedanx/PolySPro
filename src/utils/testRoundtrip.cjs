@@ -1,6 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Mocks the execution and validation of the "Agentic Roundtrip" workflow.
+ *
+ * Specifically, this test ensures that the constraints defined in AGENTS.md
+ * (latency, F1 score, citation coverage) are theoretically met by the RAG implementation.
+ *
+ * @async
+ * @function testRoundtrip
+ */
 async function testRoundtrip() {
   try {
     // 1. Load AGENTS.md
