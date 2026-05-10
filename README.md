@@ -49,3 +49,8 @@ Standalone unit tests are executed directly via Node:
 * [Lessons Learned during Context Evaluation](docs/lessons_learned.md)
 * [Architectural Decision Records (ADRs)](docs/adr/)
   * [ADR 0001: Adoption of CRDTs for Real-time Collaboration](docs/adr/0001-real-time-collaboration-crdt.md)
+
+### Feishu Epistemic Escrow
+We integrate KIRA-7 protocols to act as an active constraint engine over Feishu Webhooks:
+* **Webhook Sovereignty:** Full cryptographic validation of payload signatures and replay prevention via `@larksuiteoapi/node-sdk`.
+* **Scope Isolation Gate:** Strict Feishu Card JSON v2.0 generation forces clarification via interactive forms when domain invariants or scopes are undefined.
