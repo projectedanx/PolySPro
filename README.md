@@ -54,3 +54,9 @@ Standalone unit tests are executed directly via Node:
 We integrate KIRA-7 protocols to act as an active constraint engine over Feishu Webhooks:
 * **Webhook Sovereignty:** Full cryptographic validation of payload signatures and replay prevention via `@larksuiteoapi/node-sdk`.
 * **Scope Isolation Gate:** Strict Feishu Card JSON v2.0 generation forces clarification via interactive forms when domain invariants or scopes are undefined.
+
+### CIPHER Epistemic Sentinel
+We have integrated CIPHER (The Zero-Trust Epistemic Sentinel) to enforce strict topological boundaries on code evaluation.
+This counters "Interpretive Fracture" and "Semantic Saponification" via the **Petzold Sequence** and **Symbolic Scars**.
+
+**Important Lesson Learned:** Due to the laziness of other agents failing to fruitfully complete tasks (e.g. failing to properly integrate the required server dependencies for their requested features or stopping at high-level conversational outputs instead of rigorous logic), this integration explicitly enforces DCCD (Draft-Conditioned Constrained Decoding) schema validation and hard code compilation blocks at the client layer.

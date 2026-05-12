@@ -10,14 +10,16 @@
     "test:roundtrip": "node src/utils/testRoundtrip.cjs"
   },
   "dependencies": {
-    "react-dom": "19.2.5",
+    "@google/genai": "1.49.0",
     "react": "19.2.5",
-    "@google/genai": "1.49.0"
+    "react-dom": "19.2.5"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@types/node": "22.14.0",
     "@vitejs/plugin-react": "5.0.0",
-    "typescript": "5.8.3",
+    "dotenv": "^17.4.2",
+    "typescript": "^5.8.3",
     "vite": "6.4.2"
   }
 }
