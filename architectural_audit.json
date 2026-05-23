@@ -1,0 +1,12 @@
+{
+  "outcome_type": "ACCEPTED_PLAN",
+  "target_module": "src/App.tsx",
+  "initial_cognitive_complexity_score": 85,
+  "hypothesis_summary": "Extract reducer functions and agentic side-effect functions (runAssistant, runTopologyMiner) into isolated module hooks to enforce Domain-Driven Design boundaries and resolve state entanglement.",
+  "ACU_robustness_score": 0.88,
+  "tension_metric": {
+    "novelty_score": 0.75,
+    "grounding_score": 0.92
+  },
+  "justification_or_plan": "1. Extract paletteReducer to src/reducers/paletteReducer.ts.\n2. Extract agentic side-effects to src/hooks/useAgenticQueries.ts.\n3. Refactor src/App.tsx to implement structural boundaries.\n4. Execute test:roundtrip to verify system logic."
+}
