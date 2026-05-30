@@ -12,6 +12,10 @@ import { evaluateEpistemicEscrow } from './services/agentic/epistemicEscrow';
 import { checkPlausibility } from './services/agentic/plausibilityOracle';
 import { PluriversalKnowledgeCapsule } from './types';
 import { AssistantResponse, CharacterSet, SymbolMetadata } from './types';
+import { paletteReducer } from './reducers/paletteReducer';
+import { useAgenticQueries } from './hooks/useAgenticQueries';
+
+
 
 /**
  * SIC 2.1 Compliance: Using useReducer for complex UI state instead of localStorage.
@@ -29,54 +33,7 @@ type Action =
   | { type: 'REMOVE_FROM_PALETTE'; paletteId: string; char: string }
   | { type: 'REORDER_PALETTE'; paletteId: string; startIndex: number; endIndex: number };
 
-function paletteReducer(state: State, action: Action): State {
-  switch (action.type) {
-    case 'CREATE_PALETTE':
-      return {
-        ...state,
-        palettes: [
-          ...state.palettes,
-          { id: `custom-${Date.now()}`, name: action.name, characters: [], isCustom: true }
-        ]
-      };
-    case 'ADD_TO_PALETTE':
-      return {
-        ...state,
-        palettes: state.palettes.map(p => 
-          p.id === action.paletteId && !p.characters.includes(action.char)
-            ? { ...p, characters: [...p.characters, action.char] }
-            : p
-        )
-      };
-    case 'REMOVE_FROM_PALETTE':
-      return {
-        ...state,
-        palettes: state.palettes.map(p => 
-          p.id === action.paletteId
-            ? { ...p, characters: p.characters.filter(c => c !== action.char) }
-            : p
-        )
-      };
-    case 'REORDER_PALETTE':
-      return {
-        ...state,
-        palettes: state.palettes.map(p => {
-          if (p.id !== action.paletteId) return p;
-          const result = [...p.characters];
-          const [removed] = result.splice(action.startIndex, 1);
-          result.splice(action.endIndex, 0, removed);
-          return { ...p, characters: result };
-        })
-      };
-    case 'DELETE_PALETTE':
-      return {
-        ...state,
-        palettes: state.palettes.filter(p => p.id !== action.id)
-      };
-    default:
-      return state;
-  }
-}
+
 
 /**
  * The root application component for PolySymbol Pro.
@@ -98,8 +55,7 @@ const App: React.FC = () => {
   /** State indicating if the full-screen Study Mode (quiz interface) is active. */
   const [isStudyMode, setIsStudyMode] = useState(false);
   const [assistantLoading, setAssistantLoading] = useState(false);
-  const [assistantQuery, setAssistantQuery] = useState('');
-  const [assistantResult, setAssistantResult] = useState<AssistantResponse | null>(null);
+    const [assistantResult, setAssistantResult] = useState<AssistantResponse | null>(null);
   const [copied, setCopied] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   /** State cache storing previously fetched symbol metadata from the Gemini API to reduce network calls. */
@@ -200,36 +156,7 @@ const App: React.FC = () => {
   const handleClear = () => setText('');
   const handleBackspace = () => setText(prev => prev.slice(0, -1));
 
-  const runAssistant = async () => {
-    if (!assistantQuery.trim()) return;
-    setAssistantLoading(true);
-    setAssistantResult(null);
-    setAgenticIntervention(null);
-    try {
-      // Epistemic Escrow Check
-      const escrowCheck = await evaluateEpistemicEscrow(assistantQuery);
-      if (escrowCheck && escrowCheck.is_escrowed) {
-        setAgenticIntervention({
-          type: 'ESCROW',
-          message: "Epistemic Escrow Triggered: Interpretive Fracture Detected.",
-          details: escrowCheck
-        });
-        return;
-      }
-
-      const res = await findSymbol(assistantQuery);
-      setAssistantResult(res);
-      // Automatically cache results from assistant
-      if (res) {
-        setMetadataCache(prev => ({
-          ...prev,
-          [res.character]: { description: res.description, usage: res.usage }
-        }));
-      }
-    } finally {
-      setAssistantLoading(false);
-    }
-  };
+  ;
 
   const fetchCharMetadata = async (char: string) => {
     if (metadataCache[char]) return;
@@ -246,35 +173,7 @@ const App: React.FC = () => {
    * Executes a query against the Lexical Topology Miner.
    * Intercepts the query with the Epistemic Escrow first to prevent ambiguous execution.
    */
-  const runTopologyMiner = async () => {
-    if (!topologyQuery.trim()) return;
-    setTopologyLoading(true);
-    setTopologyResult(null);
-    setAgenticIntervention(null);
-    try {
-      // Plausibility Oracle Check
-      const constraints = [
-        "Must not invoke server-side specific language or APIs",
-        "Must be purely conceptual or client-side abstract",
-        "Must not request direct database manipulation"
-      ];
-      const plausibilityCheck = await checkPlausibility(topologyQuery, constraints);
-
-      if (plausibilityCheck && !plausibilityCheck.is_valid) {
-        setAgenticIntervention({
-          type: 'ORACLE_REJECTION',
-          message: "Plausibility Oracle: Structural Constraint Violation.",
-          details: plausibilityCheck
-        });
-        return;
-      }
-
-      const res = await mineTopology(topologyQuery);
-      setTopologyResult(res);
-    } finally {
-      setTopologyLoading(false);
-    }
-  };
+  ;
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
